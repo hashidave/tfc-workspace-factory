@@ -1,0 +1,6 @@
+#
+# Required Providers
+#
+provider "hcp" {}
+
+
