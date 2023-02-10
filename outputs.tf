@@ -10,3 +10,7 @@ output "workspace-namespaces"{
 output "sub" {
   value = vault_jwt_auth_backend_role.tfc-role[*].bound_claims.sub
 }
+
+#output "auth-method"{
+#  value= 
+#}
