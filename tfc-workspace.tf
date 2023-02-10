@@ -12,7 +12,7 @@ provider "tfe" {
 resource "tfe_workspace" "my_workspace" {
   count = length (var.tf-workspaces)
 
-  name         = var.tf-workspaces[count.index].workspace
+  name         = "${var.tf-workspaces[count.index].workspace}-${var.environment}"
   organization = var.terraform-org
   project_id = var.tf-workspaces[count.index].project
 }
