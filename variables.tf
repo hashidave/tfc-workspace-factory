@@ -41,9 +41,11 @@ variable tfc_hostname {
 
 # This is a list of workspaces that we create with bootstrapped Vault dynamic creds
 # you'll need a name, a project name, and a vault secret path that it can access.
+# IMPORTANT: Leave the environment (dev/qa/prod) off of the workspace name
 variable tf-workspaces {
   type = list(map(string))
   default= [
-     {workspace="workspace1", project_name="Unit Testing", project="prj-PWoNxUybpnpn858h"} 
+     {workspace="workspace1", project_name="Unit Testing", project="prj-PWoNxUybpnpn858h"}, 
+     {workspace="GoldenImage-AWS", project_name="Golden Image Workflows", project="prj-Ledw7n1QH4r6ygDJ"} 
   ]        
 }
