@@ -32,7 +32,7 @@ resource "vault_jwt_auth_backend_role" "tfc-role" {
   bound_audiences = ["vault.workload.identity"]
   bound_claims_type = "glob"
   bound_claims = {
-    sub = "organization:${var.terraform-org}:project:${var.tf-workspaces[count.index].project_name}:workspace:${var.tf-workspaces[count.index].workspace}:run_phase:*"
+    sub = "organization:${var.terraform-org}:project:${var.tf-workspaces[count.index].project_name}:workspace:${var.tf-workspaces[count.index].workspace}-${var.environment}:run_phase:*"
   }
   user_claim      = "terraform_full_workspace"
   role_type       = "jwt"
@@ -73,3 +73,35 @@ EOT
 
   depends_on =[vault_namespace.tf_workspace]
 }
+
+
+resource "vault_policy" "Golden-Image-AWS-Dev" {
+  name = "tfc-policy-GoldenImage-AWS-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/GoldenImage-AWS-${var.environment}"
+  
+  policy = <<EOT
+# Used to generate child tokens in vault
+path "auth/token/create" {
+  capabilities = ["sudo", "create", "read", "update", "list"]
+}
+# Used by the token to query itself
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+path "*" {
+	capabilities = ["read","create","update","delete","list","patch"]
+}
+
+path "sys/mounts/*" {
+  capabilities = ["create", "update", "delete"]
+}
+path "sys/leases/revoke" {
+  capabilities = ["update"]
+}
+EOT
+
+# TF has dependency issues...
+
+  depends_on =[vault_namespace.tf_workspace]
+}
+
