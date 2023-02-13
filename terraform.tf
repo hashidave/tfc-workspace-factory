@@ -9,7 +9,7 @@ terraform {
     hostname     = "app.terraform.io"
 
     workspaces {
-      tags = ["vault-environment"]
+      tags = ["tfc-workspace-factory"]
     }
  }
 }
