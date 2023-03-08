@@ -44,9 +44,9 @@ resource "vault_jwt_auth_backend_role" "tfc-role" {
 #################################################
 ####  Vault policies for the various workspaces##
 #################################################
-resource "vault_policy" "workspace1" {
-  name = "tfc-policy-workspace1-${var.environment}"
-  namespace = "${vault_namespace.tf_namespace.path}/workspace1-${var.environment}"
+resource "vault_policy" "terraform-rds" {
+  name = "tfc-policy-terraform-rds-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/terraform-rds-${var.environment}"
   
   policy = <<EOT
 # Used to generate child tokens in vault
@@ -75,9 +75,40 @@ EOT
 }
 
 
-resource "vault_policy" "Golden-Image-AWS-Dev" {
-  name = "tfc-policy-GoldenImage-AWS-${var.environment}"
-  namespace = "${vault_namespace.tf_namespace.path}/GoldenImage-AWS-${var.environment}"
+
+resource "vault_policy" "terraform-aws" {
+  name = "tfc-policy-terraform-aws-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/terraform-aws-${var.environment}"
+  
+  policy = <<EOT
+# Used to generate child tokens in vault
+path "auth/token/create" {
+  capabilities = ["sudo", "create", "read", "update", "list"]
+}
+# Used by the token to query itself
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+path "*" {
+	capabilities = ["read","create","update","delete","list","patch"]
+}
+
+path "sys/mounts/*" {
+  capabilities = ["create", "update", "delete"]
+}
+path "sys/leases/revoke" {
+  capabilities = ["update"]
+}
+EOT
+
+# TF has dependency issues...
+
+  depends_on =[vault_namespace.tf_workspace]
+}
+
+resource "vault_policy" "test" {
+  name = "tfc-policy-test-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/test-${var.environment}"
   
   policy = <<EOT
 # Used to generate child tokens in vault
