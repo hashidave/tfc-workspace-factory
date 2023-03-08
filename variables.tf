@@ -11,8 +11,9 @@ variable "environment"{
 }
 
 variable "terraform-org"{
-  default="hashi-DaveR"
+  default=""
 }
+
 # The audience of the ideneity token
 variable TFC_WORKLOAD_IDENTITY_AUDIENCE{
   #recommended default from the docs
@@ -20,9 +21,10 @@ variable TFC_WORKLOAD_IDENTITY_AUDIENCE{
 }
 
 variable VAULT_ADDR{
-  default="https://hashiDaveR-vault-cluster-public-vault-f886c6aa.441332cd.z1.hashicorp.cloud:8200"
+  default=""
 }
 
+# what is this?
 variable TFC_VAULT_RUN_ROLE {
   default=""
 }
@@ -45,7 +47,6 @@ variable tfc_hostname {
 variable tf-workspaces {
   type = list(map(string))
   default= [
-     {workspace="workspace1", project_name="Unit Testing", project="prj-PWoNxUybpnpn858h"}, 
-     {workspace="GoldenImage-AWS", project_name="Golden Image Workflows", project="prj-Ledw7n1QH4r6ygDJ"} 
+     {workspace="workspace1", project_name="Default", project="default"} 
   ]        
 }
