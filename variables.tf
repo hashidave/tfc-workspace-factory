@@ -13,6 +13,11 @@ variable "environment"{
 variable "terraform-org"{
   default=""
 }
+variable "HCP_Packer_RunTask_ID"{
+  description = "Since almost everything I do needs packer, go ahead & link in the Run Task"
+  default=""
+
+}
 
 # The audience of the ideneity token
 variable TFC_WORKLOAD_IDENTITY_AUDIENCE{
@@ -47,6 +52,32 @@ variable tfc_hostname {
 variable tf-workspaces {
   type = list(map(string))
   default= [
-     {workspace="workspace1", project_name="Default", project="default"} 
+     {workspace="workspace1", project_name="Default", project="default"},
+     {workspace="fixit", project_name="Default", project="default"} 
   ]        
+}
+
+
+variable default-vault-policy{
+  default= <<EOT
+# Used to generate child tokens in vault
+path "auth/token/create" {
+  capabilities = ["sudo", "create", "read", "update", "list"]
+}
+# Used by the token to query itself
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+path "*" {
+	capabilities = ["read","create","update","delete","list","patch"]
+}
+
+path "sys/mounts/*" {
+  capabilities = ["create", "update", "delete"]
+}
+path "sys/leases/revoke" {
+  capabilities = ["update"]
+}
+EOT
+
 }

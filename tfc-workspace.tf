@@ -17,6 +17,15 @@ resource "tfe_workspace" "my_workspace" {
   project_id = var.tf-workspaces[count.index].project
 }
 
+  # Turn on the HCP Packer run task for everything. we need it every time.
+resource"tfe_workspace_run_task" "hcp_packer" {
+  count = length (var.tf-workspaces)
+  workspace_id      = tfe_workspace.my_workspace[count.index].id
+  task_id           = var.HCP_Packer_RunTask_ID
+  enforcement_level = "mandatory"
+}  
+
+
 # The following variables must be set to allow runs
 # to authenticate to Vault.
 #

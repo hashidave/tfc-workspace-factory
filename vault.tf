@@ -48,27 +48,7 @@ resource "vault_policy" "terraform-rds" {
   name = "tfc-policy-terraform-rds-${var.environment}"
   namespace = "${vault_namespace.tf_namespace.path}/terraform-rds-${var.environment}"
   
-  policy = <<EOT
-# Used to generate child tokens in vault
-path "auth/token/create" {
-  capabilities = ["sudo", "create", "read", "update", "list"]
-}
-# Used by the token to query itself
-path "auth/token/lookup-self" {
-  capabilities = ["read"]
-}
-path "*" {
-	capabilities = ["read","create","update","delete","list","patch"]
-}
-
-path "sys/mounts/*" {
-  capabilities = ["create", "update", "delete"]
-}
-path "sys/leases/revoke" {
-  capabilities = ["update"]
-}
-EOT
-
+  policy = var.default-vault-policy
 # TF has dependency issues...
 
   depends_on =[vault_namespace.tf_workspace]
@@ -80,59 +60,28 @@ resource "vault_policy" "terraform-aws" {
   name = "tfc-policy-terraform-aws-${var.environment}"
   namespace = "${vault_namespace.tf_namespace.path}/terraform-aws-${var.environment}"
   
-  policy = <<EOT
-# Used to generate child tokens in vault
-path "auth/token/create" {
-  capabilities = ["sudo", "create", "read", "update", "list"]
-}
-# Used by the token to query itself
-path "auth/token/lookup-self" {
-  capabilities = ["read"]
-}
-path "*" {
-	capabilities = ["read","create","update","delete","list","patch"]
-}
-
-path "sys/mounts/*" {
-  capabilities = ["create", "update", "delete"]
-}
-path "sys/leases/revoke" {
-  capabilities = ["update"]
-}
-EOT
-
+  policy = var.default-vault-policy
 # TF has dependency issues...
-
   depends_on =[vault_namespace.tf_workspace]
 }
 
-resource "vault_policy" "test" {
-  name = "tfc-policy-test-${var.environment}"
-  namespace = "${vault_namespace.tf_namespace.path}/test-${var.environment}"
+resource "vault_policy" "networks" {
+  name = "tfc-policy-networks-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/networks-${var.environment}"
   
-  policy = <<EOT
-# Used to generate child tokens in vault
-path "auth/token/create" {
-  capabilities = ["sudo", "create", "read", "update", "list"]
-}
-# Used by the token to query itself
-path "auth/token/lookup-self" {
-  capabilities = ["read"]
-}
-path "*" {
-	capabilities = ["read","create","update","delete","list","patch"]
-}
-
-path "sys/mounts/*" {
-  capabilities = ["create", "update", "delete"]
-}
-path "sys/leases/revoke" {
-  capabilities = ["update"]
-}
-EOT
-
+  policy = var.default-vault-policy
 # TF has dependency issues...
-
   depends_on =[vault_namespace.tf_workspace]
 }
+
+resource "vault_policy" "consul-cluster" {
+  name = "consul-cluster-${var.environment}"
+  namespace = "${vault_namespace.tf_namespace.path}/consul-cluster-${var.environment}"
+  
+  policy = var.default-vault-policy
+# TF has dependency issues...
+  depends_on =[vault_namespace.tf_workspace]
+}
+
+
 
