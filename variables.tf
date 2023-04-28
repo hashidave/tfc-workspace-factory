@@ -13,17 +13,20 @@ variable "environment"{
 variable "terraform-org"{
   default=""
 }
+
 variable "HCP_Packer_RunTask_ID"{
   description = "Since almost everything I do needs packer, go ahead & link in the Run Task"
   default=""
 
 }
 
+/*
 # The audience of the ideneity token
 variable TFC_WORKLOAD_IDENTITY_AUDIENCE{
   #recommended default from the docs
   default="vault.workload.identity"
 }
+*/
 
 variable VAULT_ADDR{
   default=""
@@ -33,7 +36,7 @@ variable VAULT_ADDR{
 variable TFC_VAULT_RUN_ROLE {
   default=""
 }
-
+/*
 variable HCP_ROOT_NAMESPACE{
   default = "admin"
 }
@@ -52,7 +55,7 @@ variable tfc_hostname {
 variable tf-workspaces {
   type = list(map(string))
   default= [
-     {workspace="workspace1", project_name="Default", project="default"},
+     {workspace="workspace1", project_name="Default", project="default", needs_aws_dynamic_creds=1},
      {workspace="fixit", project_name="Default", project="default"} 
   ]        
 }
@@ -81,3 +84,4 @@ path "sys/leases/revoke" {
 EOT
 
 }
+*/
