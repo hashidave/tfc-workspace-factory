@@ -11,21 +11,22 @@ overrides as necesary. Particularly
 Workspaces are created using a module called tfc_workspace_env.  Provide inputs to create the workspace to your specs.  See modules/tfc_workspace_env/README.md for details
 
 Here's an example that creates a workspace called "consul-cluster"
+
     module "consul-cluster"{
-    source = "./modules/tfc_workspace_env"
+        source = "./modules/tfc_workspace_env"
 
-    # terraform stuff   
-    workspace_name = "consul-cluster"
-    terraform-org  = var.terraform-org
-    environment = var.environment
-    project_id="prj-mo2f5NUw3CFT7yQq"
-    project_name="Core Infra"
-    HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
+        # terraform stuff   
+        workspace_name = "consul-cluster"
+        terraform-org  = var.terraform-org
+        environment = var.environment
+        project_id="prj-mo2f5NUw3CFT7yQq"
+        project_name="Core Infra"
+        HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
 
-    # vault stuff
-    VAULT_ADDR =var.VAULT_ADDR
-    VAULT_NAMESPACE = "terraform_workloads"
-    vault_enable_aws_dynamic_secrets=true  
+        # vault stuff
+        VAULT_ADDR =var.VAULT_ADDR
+        VAULT_NAMESPACE = "terraform_workloads"
+        vault_enable_aws_dynamic_secrets=true  
     }
 
 
