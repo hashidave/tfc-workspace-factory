@@ -3,17 +3,34 @@ Sets up TF workspaces that are ready to go with their own Dynamic Workload Crede
 
 Variables are defaulted for me so you'll need to make meaningful
 overrides as necesary. Particularly
-- terraform-org - self-explanatory... i hope
-- VAULT_ADDR - The address of your HCP Vault cluster.  If it's not HCP, also change the **HCP_ROOT_NAMESPACE** var to either blank or something that works in your env
-- VAULT_NAMESPACE -I have this set up to create a master Vault namespace for all TF projects & then a sub-namespace is created for each TF workspace.  
-- tf-workspaces - This is the big one.  It's a list of maps that define each workspace.  Each one will require a **workspace**, a **project_name** and an id for the project named **project**.  Create one map per workspace that you need
-
-The next thing you need to do is go into vault.tf & create a vault policy for each workspace. This policy will control what TF is allowed to do in the vault namespace that goes along with the workspace. I considered templatizing this but there are too many unknowns as to what your workspace might need to do in Vault.  
-
-Make the policy as a vault_policy resource following the example code for **workspace1**. I gave it basically full control which isn't the most secure practice. YMMV.
+- terraform-org - your org name
+- environment - typically dev/qa/prod.  This will be appended to namespaces, workspaces, etc. 
+- HCP_Packer_RunTask_ID - If you use Packer a lot, go ahead & put in your runtask ID.  Leave blank otherwise. 
 
 
-This is best run locally as you'll need a highly-privileged vault user.  I auth locally to vault.  
+Workspaces are created using a module called tfc_workspace_env.  Provide inputs to create the workspace to your specs.  See modules/tfc_workspace_env/README.md for details
+
+Here's an example that creates a workspace called "consul-cluster"
+    module "consul-cluster"{
+    source = "./modules/tfc_workspace_env"
+
+    # terraform stuff   
+    workspace_name = "consul-cluster"
+    terraform-org  = var.terraform-org
+    environment = var.environment
+    project_id="prj-mo2f5NUw3CFT7yQq"
+    project_name="Core Infra"
+    HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
+
+    # vault stuff
+    VAULT_ADDR =var.VAULT_ADDR
+    VAULT_NAMESPACE = "terraform_workloads"
+    vault_enable_aws_dynamic_secrets=true  
+    }
+
+
+
+This is best run locally as you'll need a highly-privileged vault user.   
 
 
 
