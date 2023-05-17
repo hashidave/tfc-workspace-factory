@@ -55,19 +55,17 @@ resource "vault_policy" "tfc-policy" {
 ####  feature that may not be present in      ###
 ####  every workspace                         ###
 #################################################
+# Generate access creds for our master user
+#resource "aws_iam_access_key" "aws_master_key" {
+#  count = var.vault_enable_aws_dynamic_secrets ==true ? 1 : 0  
+#  user = var.vault_dynamic_creds_master_user
+#}
 
-/*
+
 # Enable the AWS Secrets engine if it's part of the input
-resource "vault_aws_secret_backend" "aws_secrets" {
-  count = vault_enable_aws_dynamic_secrets ? 1 : 0  
-  username = vault_dynamic_creds_master_user   
-  
-}
-
-#resource "vault_aws_secrets_role" "vault_role"{
-   
-
-}
-
-*/
+#resource "vault_aws_secret_backend" "aws_secrets" {
+#  count = var.vault_enable_aws_dynamic_secrets == true ? 1 : 0  
+#  access_key = aws_iam_access_key.aws_master_key[count.index].id
+#  secret_key = aws_iam_access_key.aws_master_key[count.index].secret
+#}
 
