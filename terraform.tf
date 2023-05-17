@@ -3,6 +3,9 @@ terraform {
     boundary = {
       source  = "hashicorp/boundary"
     }
+    aws ={
+      source = "hashicorp/aws" 
+    }
   }
   cloud {
     organization = "hashi-DaveR"
@@ -15,8 +18,12 @@ terraform {
 }
 
 
-data "tfe_workspace" "current_workspace"{
-  name=terraform.workspace
+#data "tfe_workspace" "current_workspace"{
+#  name=terraform.workspace
+#  organization = var.terraform-org
+#}
+
+data "tfe_outputs" "core-network"{
+  workspace = "networks-${var.environment}"
   organization = var.terraform-org
 }
-

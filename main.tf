@@ -3,7 +3,7 @@
 #
 provider "hcp" {}
 
-
+/*  we can't be our own grandpaw so I took this out 
 module "networks"{
   source = "./modules/tfc_workspace_env"
    
@@ -20,7 +20,7 @@ module "networks"{
   VAULT_NAMESPACE = "terraform_workloads"
   
 }
-
+*/
 
 module "terraform-aws"{
   source = "./modules/tfc_workspace_env"
@@ -53,7 +53,9 @@ module "consul-cluster"{
   # vault stuff
   VAULT_ADDR =var.VAULT_ADDR
   VAULT_NAMESPACE = "terraform_workloads"
-  vault_enable_aws_dynamic_secrets=true  
+  enable_aws_dynamic_workspace_creds=true
+  # AWS Creds 
+  #vault_dynamic_creds_master_user = data.tfe_outputs.core-network.values.vault_dynamic_creds_master_user.name
 }
 
 module "terraform_rds"{
@@ -67,7 +69,7 @@ module "terraform_rds"{
   project_name="Golden Image Workflows"
   VAULT_ADDR =var.VAULT_ADDR
   VAULT_NAMESPACE = "terraform_workloads"
-  HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
+  HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID                                  
 }
 
 module "terraform_gcp"{
