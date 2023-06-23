@@ -10,6 +10,11 @@ variable "environment"{
   default = "dev"
 }
 
+variable tfc_hostname {
+  description = "the default tfc hostname"
+  default="app.terraform.io"
+}
+
 variable "terraform-org"{
   default=""
 }
@@ -29,3 +34,17 @@ variable VAULT_ADDR{
 #variable TFC_VAULT_RUN_ROLE {
 #  default=""
 #}
+
+variable Use_AWS{
+  description =  "If we are using AWS at all, turn this on."  
+}
+
+variable "tfc_aws_audience" {
+  type        = string
+  default     = "aws.workload.identity"
+  description = "The audience value to use in run identity tokens.  Only required if we are using AWS."
+}
+
+variable Use_GCP{
+  description =  "If we are using GCP at all, turn this on."  
+}
