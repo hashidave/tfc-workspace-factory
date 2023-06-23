@@ -6,6 +6,12 @@ terraform {
     aws ={
       source = "hashicorp/aws" 
     }
+    google ={
+      source = "hashicorp/google"
+    }
+    google-beta ={
+      source = "hashicorp/google-beta"
+    }
   }
   cloud {
     organization = "hashi-DaveR"
