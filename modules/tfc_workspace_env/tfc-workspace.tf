@@ -123,3 +123,58 @@ resource "tfe_variable" "tfc_aws_role_arn" {
 
   description = "The AWS role arn runs will use to authenticate."
 }
+
+
+##################################################################
+##### Workload Identity support for GCP ##########################
+##################################################################
+resource "tfe_variable" "enable_gcp_provider_auth" {
+  count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
+  workspace_id = tfe_workspace.my_workspace.id
+
+  key      = "TFC_GCP_PROVIDER_AUTH"
+  value    = "true"
+  category = "env"
+
+  description = "Enable the Workload Identity integration for GCP."
+}
+
+# The provider name contains the project number, pool ID,
+# and provider ID. This information can be supplied using
+# this TFC_GCP_WORKLOAD_PROVIDER_NAME variable, or using
+# the separate TFC_GCP_PROJECT_NUMBER, TFC_GCP_WORKLOAD_POOL_ID,
+# and TFC_GCP_WORKLOAD_PROVIDER_ID variables below if desired.
+#
+resource "tfe_variable" "tfc_gcp_workload_provider_name" {
+  count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
+  workspace_id = tfe_workspace.my_workspace.id
+
+  key      = "TFC_GCP_WORKLOAD_PROVIDER_NAME"
+  value    =  google_iam_workload_identity_pool_provider.tfc_provider[count.index].name
+  category = "env"
+
+  description = "The workload provider name to authenticate against."
+}
+
+resource "tfe_variable" "tfc_gcp_service_account_email" {
+  count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
+  workspace_id = tfe_workspace.my_workspace.id
+
+  key      = "TFC_GCP_RUN_SERVICE_ACCOUNT_EMAIL"
+  value    = google_service_account.tfc_service_account[count.index].email
+  category = "env"
+
+  description = "The GCP service account email runs will use to authenticate."
+}
+
+resource "tfe_variable" "tfc_gcp_project_id" {
+  count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
+  workspace_id = tfe_workspace.my_workspace.id
+
+  key      = "GCP_Project_ID"
+  value    = var.gcp_project_id
+  category = "terraform"
+
+  description = "The GCP project ID that we use in the workspace"
+}
+
