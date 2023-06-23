@@ -10,9 +10,10 @@ variable "environment"{
   description="The name of this environment.  Should conform to a dev/qa/prod-type semantics."
 }
 
-variable tfc_hostname {
-  description = "the default tfc hostname"
-  default="app.terraform.io"
+variable tfc_hostname{
+  description = "Your terraform hostname.  Defaults to cloud provider"
+  type = string
+  default = "app.terraform.io"
 }
 
 variable "terraform-org"{
@@ -90,6 +91,52 @@ variable enable_aws_dynamic_workspace_creds{
   default=false
 }
 
+variable aws_oidc_provider_arn{
+  type = string
+  description = "The oidc provider we are using for AWS.  Only required for AWS"
+  default =""
+}
+
+variable aws_oidc_provider_client_id_list{
+  type = list(string)
+  description = "The oidc provider we are using for AWS.  Only required for AWS"
+  default=[""]
+}
+
+
+variable tfc_aws_audience{
+  description = "Default aws audience for tfc.  Don't change this unless you really need to."
+  default ="aws.workload.identity"
+}
+
+
+#################################################
+########  Dynamic Workspace creds for GCP #######
+#################################################
+
+variable enable_gcp_dynamic_workspace_creds{
+  type=bool
+  description = "Do we need Dynamic Workspace Credentials for GCP? true/false"
+  default=false
+}
+
+variable gcp_project_id {
+  type = string
+  description = "The google project we want to set up auth for."
+  default =""
+}
+
+variable "gcp_service_list" {
+  description = "APIs required for the project"
+  type        = list(string)
+  default = [
+    "iam.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "sts.googleapis.com",
+    "iamcredentials.googleapis.com"
+  ]
+}
+
 /*
 variable vault_dynamic_creds_master_user{
   type = string
@@ -127,8 +174,3 @@ EOT
 }
 
 
-variable "tfc_aws_audience" {
-  type        = string
-  default     = "aws.workload.identity"
-  description = "The audience value to use in run identity tokens"
-}
