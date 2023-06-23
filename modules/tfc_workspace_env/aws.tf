@@ -5,23 +5,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-# Data source used to grab the TLS certificate for Terraform Cloud.
-#
-# https://registry.terraform.io/providers/hashicorp/tls/latest/docs/data-sources/certificate
-data "tls_certificate" "tfc_certificate" {
-  count = var.enable_aws_dynamic_workspace_creds == true ? 1 : 0
-  url = "https://${var.tfc_hostname}"
-}
 
-# Creates an OIDC provider which is restricted to
-#
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_openid_connect_provider
-resource "aws_iam_openid_connect_provider" "tfc_provider" {
-  count = var.enable_aws_dynamic_workspace_creds == true ? 1 : 0
-  url             = data.tls_certificate.tfc_certificate[count.index].url
-  client_id_list  = [var.tfc_aws_audience]
-  thumbprint_list = [data.tls_certificate.tfc_certificate[count.index].certificates[0].sha1_fingerprint]
-}
 
 # Creates a role which can only be used by the specified Terraform
 # cloud workspace.
@@ -37,13 +21,12 @@ resource "aws_iam_role" "tfc_role" {
       {
         "Effect": "Allow",
         "Principal": {
-          "Federated": "${aws_iam_openid_connect_provider.tfc_provider[count.index].arn}"
+          "Federated": "${var.aws_oidc_provider_arn}"
         },
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
           "StringEquals": {
-            "${var.tfc_hostname}:aud": "${one(aws_iam_openid_connect_provider.tfc_provider[count.index].client_id_list)}",
-            "${var.tfc_hostname}:aud": "${var.tfc_aws_audience}"
+            "${var.tfc_hostname}:aud": "${one(var.aws_oidc_provider_client_id_list)}"
           },
           "StringLike": {
             "${var.tfc_hostname}:sub": "organization:${var.terraform-org}:project:${var.project_name}:workspace:${var.workspace_name}-${var.environment}:run_phase:*"
