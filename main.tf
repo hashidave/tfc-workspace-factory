@@ -111,3 +111,20 @@ module "terraform_gcp"{
   enable_gcp_dynamic_workspace_creds=true
   gcp_project_id="mystical-glass-360520"
 }
+
+
+###########################################
+#### JWT Auth Demo ########################
+###########################################
+module "vault_jwt_auth"{
+  source = "./modules/tfc_workspace_env"
+   
+  workspace_name = "vault-jwt-auth-demo"
+  environment = var.environment
+  terraform-org  = var.terraform-org
+  project_id="prj-U4CxHfAf34u3JfC1"
+  project_name="Various Demos"
+  VAULT_ADDR =var.VAULT_ADDR
+  VAULT_NAMESPACE = "terraform_workloads"
+  
+}
