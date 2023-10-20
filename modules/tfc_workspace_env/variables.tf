@@ -151,26 +151,14 @@ variable default-vault-policy{
 
 #Terraform is the de-facto terraform admin of the newly created namespace.
 path "*" {
-	capabilities = ["read","create","update","delete","list","patch"]
+	capabilities = ["read","create","update","delete","list","patch", "sudo"]
 }
-# Used to generate child tokens in vault
-path "auth/token/create" {
-  capabilities = ["sudo", "create", "read", "update", "list"]
-}
-# Used by the token to query itself
-path "auth/token/lookup-self" {
-  capabilities = ["read"]
-}
-
-path "sys/mounts/*" {
-  capabilities = ["create", "update", "delete"]
-}
-path "sys/leases/revoke" {
-  capabilities = ["update"]
-}
-
 EOT
 
 }
 
+
+variable "remote_state_ids"{
+  default =["abcd","efgh"]
+}
 
