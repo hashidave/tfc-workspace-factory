@@ -4,6 +4,7 @@ resource "tfe_workspace" "my_workspace" {
   project_id = var.project_id
   tag_names = var.workspace_tags
   global_remote_state = var.global_remote_state_sharing
+  remote_state_consumer_ids= length(var.remote_state_ids)==0? [] : var.remote_state_ids
 }
 
   # Turn on the HCP Packer run task for everything. we need it every time.
