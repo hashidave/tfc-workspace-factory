@@ -45,6 +45,22 @@ variable "tfc_aws_audience" {
   description = "The audience value to use in run identity tokens.  Only required if we are using AWS."
 }
 
-variable Use_GCP{
+variable "Use_GCP"{
   description =  "If we are using GCP at all, turn this on."  
+}
+
+variable "gcp_project_id"{
+  type = string
+  default ="default"
+}
+
+variable "gcp_service_list" {
+  description = "APIs required for the project"
+  type        = list(string)
+  default = [
+    "iam.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "sts.googleapis.com",
+    "iamcredentials.googleapis.com"
+  ]
 }
