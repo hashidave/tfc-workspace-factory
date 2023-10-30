@@ -159,6 +159,8 @@ EOT
 
 
 variable "remote_state_ids"{
-  default =["abcd","efgh"]
+  default =[]
 }
+
+
 
