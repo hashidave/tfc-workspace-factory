@@ -120,22 +120,17 @@ variable enable_gcp_dynamic_workspace_creds{
   default=false
 }
 
+variable gcp_identity_pool{
+  default=""
+}
+
 variable gcp_project_id {
   type = string
   description = "The google project we want to set up auth for."
-  default =""
+  default ="default"
 }
 
-variable "gcp_service_list" {
-  description = "APIs required for the project"
-  type        = list(string)
-  default = [
-    "iam.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "sts.googleapis.com",
-    "iamcredentials.googleapis.com"
-  ]
-}
+
 
 /*
 variable vault_dynamic_creds_master_user{
@@ -161,6 +156,7 @@ EOT
 variable "remote_state_ids"{
   default =[]
 }
+
 
 
 
