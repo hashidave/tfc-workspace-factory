@@ -40,6 +40,29 @@ resource "aws_iam_openid_connect_provider" "tfc_provider" {
   thumbprint_list = [data.tls_certificate.tfc_certificate[count.index].certificates[0].sha1_fingerprint]
 }
 
+# Enables the required services in the project.
+#
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_service
+resource "google_project_service" "services" {
+  count = var.Use_GCP == true ? length(var.gcp_service_list) : 0
+  project = var.gcp_project_id
+  service = var.gcp_service_list[count.index]
+}
+
+# Creates a workload identity pool to house a workload identity
+# pool provider.
+#
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/iam_workload_identity_pool
+resource "google_iam_workload_identity_pool" "tfc_pool" {
+  count = var.Use_GCP == true ? 1 : 0
+  provider = google-beta
+  project = var.gcp_project_id
+  workload_identity_pool_id = "${var.environment}-terraform-identity-pool"
+}
+
+
+
+
 
 module "terraform-aws"{
   source = "./modules/tfc_workspace_env"
@@ -94,9 +117,13 @@ module "terraform_rds"{
   project_name="Golden Image Workflows"
   VAULT_ADDR =var.VAULT_ADDR
   VAULT_NAMESPACE = "terraform_workloads"
-  HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID                                  
-}
+  HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID  
 
+  enable_aws_dynamic_workspace_creds=true
+  aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
+  aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list                                
+}
+ 
 module "terraform_gcp"{
   source = "./modules/tfc_workspace_env"
    
@@ -109,7 +136,8 @@ module "terraform_gcp"{
   VAULT_NAMESPACE = "terraform_workloads"
   HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
   enable_gcp_dynamic_workspace_creds=true
-  gcp_project_id="mystical-glass-360520"
+  gcp_project_id=var.gcp_project_id
+  gcp_identity_pool = google_iam_workload_identity_pool.tfc_pool[0]
 }
 
 
@@ -128,3 +156,65 @@ module "vault_jwt_auth"{
   VAULT_NAMESPACE = "terraform_workloads"
   
 }
+
+
+/* module "ModuleTest"{
+  #count=0
+  source = "./modules/tfc_workspace_env"
+   
+  workspace_name = "ModuleTest-dev"
+  environment = var.environment
+  terraform-org  = var.terraform-org
+  project_id="prj-U4CxHfAf34u3JfC1"
+  project_name="Various Demos"
+  VAULT_ADDR =var.VAULT_ADDR
+  VAULT_NAMESPACE = "terraform_workloads"
+  
+} */
+
+
+
+module "tfe_prerequisites"{
+  source = "./modules/tfc_workspace_env"
+  workspace_name = "tfe-prereqs"
+  environment = var.environment
+  workspace_tags = ["tfe-prereqs"]
+  terraform-org  = var.terraform-org
+  project_id="prj-mo2f5NUw3CFT7yQq"
+  project_name="Core Infra"
+  VAULT_ADDR =var.VAULT_ADDR
+  VAULT_NAMESPACE = "terraform_workloads"
+  #HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
+  enable_gcp_dynamic_workspace_creds=false
+  gcp_project_id="mystical-glass-360520"
+
+  enable_aws_dynamic_workspace_creds=true
+  aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
+  aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list
+}
+ 
+
+
+
+##### For stuff that we don't own the workspace, like no-code,we can still easily
+##### stand up some OIDC stuff.
+module "no-code-test-1"{
+  source = "./modules/oidc_config"
+   
+  # terraform stuff 
+  project_name="Default Project"
+  #is_global_var_set=true
+  workspace_name = "test2"
+  workspace_tags = ["no-code-test"]
+  #environment = var.environment
+  terraform-org  = var.terraform-org
+  
+    # AWS Stuff
+  enable_aws_dynamic_workspace_creds=true
+  aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
+  aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list
+} 
+
+
+
+
