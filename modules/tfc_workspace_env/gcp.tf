@@ -91,5 +91,11 @@ resource "google_project_iam_member" "tfc_project_member" {
   member  = "serviceAccount:${google_service_account.tfc_service_account[count.index].email}"
 }
 
-
+/* # Also need to deal with IAM so set that up as well.
+resource "google_project_iam_member" "tfc_project_member" {
+  count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
+  project = var.gcp_project_id
+  role    = "roles/iam.serviceAccountAdmin"
+  member  = "serviceAccount:${google_service_account.tfc_service_account[count.index].email}"
+} */
 

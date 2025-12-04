@@ -7,14 +7,11 @@ resource "vault_namespace" "tf_workspace" {
 }
 
 resource "vault_jwt_auth_backend" "tfc-jwt" {
-    namespace = vault_namespace.tf_workspace.path_fq
-    
-    
+    namespace = vault_namespace.tf_workspace.path_fq   
     path                = "jwt-tf"
     oidc_discovery_url  = "https://app.terraform.io"
     bound_issuer        = "https://app.terraform.io"
 }
-
 
 # stand up a backend role for each of the workspaces
 # in var.
