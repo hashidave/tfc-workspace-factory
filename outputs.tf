@@ -1,3 +1,8 @@
+# Other workspaces may need this
+#output "oidc_provider"{
+#  value=aws_iam_openid_connect_provider.tfc_provider
+#}
+
 #output policies {
 #  value= module.terraform-aws.polices
 #}

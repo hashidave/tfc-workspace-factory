@@ -192,7 +192,7 @@ module "tfe_prerequisites"{
   aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
   aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list
 }
- 
+
 
 
 
@@ -209,12 +209,48 @@ module "no-code-test-1"{
   #environment = var.environment
   terraform-org  = var.terraform-org
   
-    # AWS Stuff
+  # AWS Stuff
   enable_aws_dynamic_workspace_creds=true
   aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
   aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list
 } 
 
 
+# our dev environment core network
+module "networks-dev"{
+  source = "./modules/oidc_config"
+   
+  # terraform stuff 
+  project_name="Core Infra"
+  #is_global_var_set=true
+  terraform-org  = var.terraform-org
+  workspace_name = "networks-dev"
+  workspace_tags = ["networks"]
+
+  enable_gcp_dynamic_workspace_creds=true
+  gcp_project_id=var.gcp_project_id
+  gcp_identity_pool = google_iam_workload_identity_pool.tfc_pool[0]
+} 
 
 
+
+module "vault-cluster-dev"{
+  source = "./modules/tfc_workspace_env"
+
+  # terraform stuff   
+  workspace_name = "vault-cluster"
+  terraform-org  = var.terraform-org
+  environment = var.environment
+  project_id="prj-mo2f5NUw3CFT7yQq"
+  project_name="Core Infra"
+  HCP_Packer_RunTask_ID=var.HCP_Packer_RunTask_ID
+
+  # vault stuff
+  VAULT_ADDR =var.VAULT_ADDR
+  VAULT_NAMESPACE = "terraform_workloads"
+   
+   # AWS Stuff
+  enable_aws_dynamic_workspace_creds=true
+  aws_oidc_provider_arn = aws_iam_openid_connect_provider.tfc_provider[0].arn
+  aws_oidc_provider_client_id_list = aws_iam_openid_connect_provider.tfc_provider[0].client_id_list
+}
