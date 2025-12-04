@@ -15,26 +15,26 @@ resource "aws_iam_role" "tfc_role" {
   count = var.enable_aws_dynamic_workspace_creds == true ? 1 : 0
   name = "${var.workspace_name}-tfc-role"
   assume_role_policy = <<EOF
-    {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "Federated": "${var.aws_oidc_provider_arn}"
-        },
-        "Action": "sts:AssumeRoleWithWebIdentity",
-        "Condition": {
-          "StringEquals": {
-            "${var.tfc_hostname}:aud": "${one(var.aws_oidc_provider_client_id_list)}"
-          },
-          "StringLike": {
-            "${var.tfc_hostname}:sub": "organization:${var.terraform-org}:project:${var.project_name}:workspace:${var.workspace_name}:run_phase:*"
-          }
-        }
+{
+"Version": "2012-10-17",
+"Statement": [
+  {
+    "Effect": "Allow",
+    "Principal": {
+      "Federated": "${var.aws_oidc_provider_arn}"
+    },
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {
+      "StringEquals": {
+        "${var.tfc_hostname}:aud": "${one(var.aws_oidc_provider_client_id_list)}"
+      },
+      "StringLike": {
+        "${var.tfc_hostname}:sub": "organization:${var.terraform-org}:project:${var.project_name}:workspace:${var.workspace_name}:run_phase:*"
       }
-    ]
     }
+  }
+]
+}
   EOF
 
 }

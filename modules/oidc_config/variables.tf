@@ -116,6 +116,10 @@ variable gcp_project_id {
   default =""
 }
 
+variable gcp_identity_pool{
+  default=""
+}
+
 variable "gcp_service_list" {
   description = "APIs required for the project"
   type        = list(string)

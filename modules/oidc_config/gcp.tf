@@ -32,6 +32,7 @@ resource "google_project_service" "services" {
   service = var.gcp_service_list[count.index]
 }
 
+/*
 # Creates a workload identity pool to house a workload identity
 # pool provider.
 #
@@ -43,6 +44,8 @@ resource "google_iam_workload_identity_pool" "tfc_pool" {
   workload_identity_pool_id = "${var.workspace_name}-identity-pool"
 }
 
+*/
+
 # Creates an identity pool provider which uses an attribute condition
 # to ensure that only the specified Terraform Cloud workspace will be
 # able to authenticate to GCP using this provider.
@@ -52,7 +55,7 @@ resource "google_iam_workload_identity_pool_provider" "tfc_provider" {
   count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
   provider                           = google-beta
   project = var.gcp_project_id
-  workload_identity_pool_id          = google_iam_workload_identity_pool.tfc_pool[count.index].workload_identity_pool_id
+  workload_identity_pool_id          = var.gcp_identity_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "${var.workspace_name}-tf-provider"
   attribute_mapping = {
     "google.subject"                        = "assertion.sub",
@@ -96,7 +99,7 @@ resource "google_service_account_iam_member" "tfc_service_account_member" {
   count = var.enable_gcp_dynamic_workspace_creds == true ? 1 : 0
   service_account_id = google_service_account.tfc_service_account[count.index].name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.tfc_pool[count.index].name}/*"
+  member             = "principalSet://iam.googleapis.com/${var.gcp_identity_pool.name}/*"
 }
 
 # Updates the IAM policy to grant the service account permissions
