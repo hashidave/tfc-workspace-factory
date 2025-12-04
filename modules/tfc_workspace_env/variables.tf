@@ -5,6 +5,25 @@
 # Terraform code. If you create a variable with no default, the user will be
 # prompted to enter it (or define it via config file or command line flags.)
 
+# Things to add
+/*
+  Ephemerality for dev.  Auto-destroy if no activity in 14 days
+  VCS connection option (pass in info if selected)
+  Publish the tfc_workspace_env as a no-code module in the registry
+  Fold oidc_config into tfc_workspace_env module.  
+  Create a blueprint that:
+     stands up a project contain dev/qa/prod workspaces
+     Create a project-level varset to hold global inputs as required.  (hcp identity, for example)
+
+  Create a project to hold the workspace no-code deployments.  
+
+  Enable HCP workload identity 
+     pass in necessary inputs 
+  https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/hcp-configuration
+
+*/
+
+
 # should be dev or production
 variable "environment"{
   description="The name of this environment.  Should conform to a dev/qa/prod-type semantics."
